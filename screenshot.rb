@@ -24,8 +24,8 @@ get '/' do
   end
   Capybara.javascript_driver = :chrome
 
-  url = 'https://creativelab.jp/login'
+  url = 'http://abehiroshi.la.coocan.jp/'
   session = Capybara::Session.new(:selenium)
-  session.visit url
+  session.visit(url)
   session.save_and_open_screenshot('screenshot.jpg')
 end
