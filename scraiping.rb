@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'pry'
+require 'slim'
 
 require 'selenium-webdriver'
 require 'capybara'
@@ -24,14 +25,14 @@ get '/' do
   end
   Capybara.javascript_driver = :chrome
 
-  start_scraping 'https://creativelab.jp/login' do
-    save_and_open_screenshot
-  end
-end
+  url = 'http://abehiroshi.la.coocan.jp/movie/eiga.htm'
+  session = Capybara::Session.new(:selenium)
+  session.visit(url)
 
-def start_scraping(url, &block)
-  Capybara::Session.new(:selenium).tap { |session|
-    session.visit url
-    session.instance_eval(&block)
-  }
+  @movies = session.find_all('table')[1]
+            .find_all('tr').each_with_object(Hash.new { |hash, key| hash[key] = [] }) do |title, result|
+              result['titles'].push(title.text)
+            end
+
+  slim :index
 end
